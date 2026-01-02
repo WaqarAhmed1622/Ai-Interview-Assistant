@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { llmService } from '../../lib/services/llmService';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import type { Database } from '../../types/database.types';
-import { Cpu, Zap, Sparkles, Box, Check, ExternalLink } from 'lucide-react';
+import { Cpu, Zap, Sparkles, Box, ExternalLink } from 'lucide-react';
 
 type LLMProvider = Database['public']['Tables']['llm_providers']['Row'];
 
@@ -82,8 +82,8 @@ export function AdminProvidersPage() {
                         <div
                             key={provider.id}
                             className={`relative group bg-white rounded-xl border-2 transition-all duration-200 ${isActive
-                                    ? 'border-primary shadow-md ring-2 ring-primary/10'
-                                    : 'border-slate-200 hover:border-slate-300 hover:shadow-sm'
+                                ? 'border-primary shadow-md ring-2 ring-primary/10'
+                                : 'border-slate-200 hover:border-slate-300 hover:shadow-sm'
                                 }`}
                         >
                             <div className="p-6">

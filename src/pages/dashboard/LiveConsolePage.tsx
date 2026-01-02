@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 export function LiveConsolePage() {
-    const { user } = useAuth();
+    useAuth(); // Auth context used for session validation
 
     // Use the unified sync hook
     const {

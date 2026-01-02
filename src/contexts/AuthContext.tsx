@@ -9,7 +9,7 @@
  * - Token refresh
  */
 
-import React, {
+import {
     createContext,
     useContext,
     useEffect,
@@ -104,7 +104,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const initializeAuth = async () => {
             try {
                 // Get initial session
-                const { data: { session }, error } = await supabase.auth.getSession();
+                const { data: { session } } = await supabase.auth.getSession();
 
                 if (!mounted) return;
 
