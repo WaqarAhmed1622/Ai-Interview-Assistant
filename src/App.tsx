@@ -15,6 +15,9 @@ import { DashboardLayout } from './layouts/DashboardLayout';
 
 // Public Pages
 import { HomePage } from './pages/HomePage';
+import { FeaturesPage } from './pages/FeaturesPage';
+import { HowItWorksPage } from './pages/HowItWorksPage';
+import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
 import { PricingPage } from './pages/PricingPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -58,6 +61,9 @@ function App() {
               {/* ============================================ */}
               <Route element={<MainLayout />}>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/features" element={<FeaturesPage />} />
+                <Route path="/how-it-works" element={<HowItWorksPage />} />
+                <Route path="/about" element={<AboutPage />} />
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/contact" element={<ContactPage />} />
               </Route>

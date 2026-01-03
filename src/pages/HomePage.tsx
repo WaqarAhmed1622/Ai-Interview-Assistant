@@ -1,21 +1,25 @@
-import { Hero } from '../components/landing/Hero';
-import { HowItWorks } from '../components/landing/HowItWorks';
-import { Features } from '../components/landing/Features';
-import { UseCases } from '../components/landing/UseCases';
-import { SocialProof } from '../components/landing/SocialProof';
-import { PricingPreview } from '../components/landing/PricingPreview';
-import { Footer } from '../components/landing/Footer';
+import { HeroSection } from './landing/HeroSection';
+import { SocialProofSection } from './landing/SocialProofSection';
+import { FeaturesGrid } from './landing/FeaturesGrid';
+import { HowItWorksSection } from './landing/HowItWorksSection';
+import { PricingTeaser } from './landing/PricingTeaser';
+import { CTASection } from './landing/CTASection';
+
+import { SEO } from '../components/SEO';
 
 export function HomePage() {
-    return (
-        <div className="min-h-screen bg-white">
-            <Hero />
-            <HowItWorks />
-            <Features />
-            <UseCases />
-            <SocialProof />
-            <PricingPreview />
-            <Footer />
-        </div>
-    );
+  return (
+    <div className="bg-background min-h-screen text-slate-200 selection:bg-primary/30">
+      <SEO 
+        title="AI Interview Copilot - Ace Technical Interviews" 
+        description="Your invisible AI assistant for technical interviews. Get real-time transcription, smart hints, and coding assistance directly in your browser."
+      />
+      <HeroSection />
+      <SocialProofSection />
+      <FeaturesGrid />
+      <HowItWorksSection />
+      <PricingTeaser />
+      <CTASection />
+    </div>
+  );
 }
