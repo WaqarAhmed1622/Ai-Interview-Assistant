@@ -5,11 +5,17 @@ import { Button } from '../ui/Button';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../contexts/AuthContext';
 
-export function Navbar() {
+interface NavbarProps {
+  variant?: 'light' | 'dark';
+}
+
+export function Navbar({ variant = 'dark' }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isAuthenticated } = useAuth();
   const location = useLocation();
+
+  const isLight = variant === 'light';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,7 +42,9 @@ export function Navbar() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         isScrolled || isMobileMenuOpen
-          ? "bg-background/80 backdrop-blur-md border-b border-white/5 py-4"
+          ? isLight 
+            ? "bg-white/80 backdrop-blur-md border-b border-slate-200 py-4 shadow-sm"
+            : "bg-background/80 backdrop-blur-md border-b border-white/5 py-4"
           : "bg-transparent py-6"
       )}
     >
@@ -47,7 +55,9 @@ export function Navbar() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg group-hover:shadow-primary/25 transition-all">
               <Sparkles className="w-5 h-5 fill-white/20" />
             </div>
-            <span className="font-bold text-lg text-white">Interview Copilot</span>
+            <span className={cn("font-bold text-lg", isLight && !isScrolled ? "text-slate-900" : isLight && isScrolled ? "text-slate-900" : "text-white")}>
+              Interview Copilot
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -58,8 +68,10 @@ export function Navbar() {
                 to={link.path}
                 className={({ isActive }) =>
                   cn(
-                    "text-sm font-medium transition-colors hover:text-white",
-                    isActive ? "text-white" : "text-slate-400"
+                    "text-sm font-medium transition-colors",
+                    isLight 
+                        ? isActive ? "text-primary font-semibold" : "text-slate-600 hover:text-slate-900"
+                        : isActive ? "text-white" : "text-slate-400 hover:text-white"
                   )
                 }
               >
@@ -79,12 +91,12 @@ export function Navbar() {
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className={cn(isLight ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100" : "text-slate-300 hover:text-white")}>
                     Log in
                   </Button>
                 </Link>
                 <Link to="/signup">
-                  <Button variant="primary" size="sm" className="bg-white text-primary hover:bg-slate-100">
+                  <Button variant="primary" size="sm" className={cn(isLight ? "bg-primary text-white hover:bg-primary/90" : "bg-white text-primary hover:bg-slate-100")}>
                     Sign up
                   </Button>
                 </Link>
@@ -94,7 +106,7 @@ export function Navbar() {
 
           {/* Mobile Menu Toggle */}
           <button
-            className="md:hidden text-slate-300 hover:text-white p-2"
+            className={cn("md:hidden p-2", isLight ? "text-slate-600 hover:text-slate-900" : "text-slate-300 hover:text-white")}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >

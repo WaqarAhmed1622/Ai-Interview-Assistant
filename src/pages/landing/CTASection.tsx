@@ -1,41 +1,49 @@
-import { ChevronRight } from 'lucide-react';
-import { Section } from '../../components/ui/Section';
+import { useNavigate } from 'react-router-dom';
+import { CheckCircle } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
+import { Section } from '../../components/ui/Section';
 import { FadeIn } from '../../components/ui/motion';
 
 export function CTASection() {
+  const navigate = useNavigate();
+
   return (
-    <Section className="py-24 md:py-32">
-      <div className="container mx-auto px-4 md:px-6">
+    <Section className="py-24 bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] text-white overflow-hidden relative">
+        {/* Abstract Shapes */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4"></div>
+
+      <div className="container mx-auto px-4 text-center relative z-10">
         <FadeIn>
-          <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-primary to-secondary p-12 md:p-20 text-center">
-            {/* Background Pattern */}
-            <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-20 mix-blend-overlay"></div>
-            <div className="absolute -top-40 -left-40 w-96 h-96 bg-white/20 rounded-full blur-3xl"></div>
-            <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-black/20 rounded-full blur-3xl"></div>
-            
-            <div className="relative z-10 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-                Ready to ace your next interview?
-              </h2>
-              <p className="text-lg md:text-xl text-white/80 mb-10 leading-relaxed">
-                Join thousands of software engineers who have already secured their dream jobs using Interview Copilot.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button size="lg" className="bg-white text-primary hover:bg-slate-100 min-w-[200px] shadow-xl">
-                  Get Started for Free
-                  <ChevronRight className="w-4 h-4 ml-2" />
-                </Button>
-                <Button variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10 min-w-[200px]">
-                  View Pricing
-                </Button>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+            Ready to Nail Your Next Interview?
+          </h2>
+          <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto font-medium">
+            Join thousands of candidates who transformed their interview performance.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <Button
+              onClick={() => navigate('/signup')}
+              className="bg-white text-primary hover:bg-white/90 px-8 py-6 text-lg font-bold rounded-lg shadow-xl"
+            >
+              Get Started for Free
+            </Button>
+          </div>
+          
+          <div className="flex flex-wrap justify-center gap-6 text-sm font-medium text-white/80">
+              <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-white" />
+                  <span>No credit card required</span>
               </div>
-              
-              <p className="mt-6 text-sm text-white/60">
-                No credit card required. Cancel anytime.
-              </p>
-            </div>
+              <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-white" />
+                  <span>7-day free trial</span>
+              </div>
+              <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-white" />
+                  <span>Cancel anytime</span>
+              </div>
           </div>
         </FadeIn>
       </div>

@@ -11,7 +11,7 @@ import { creditService } from '../../lib/services/creditService';
 import { sessionService, type SessionSummary } from '../../lib/services/sessionService';
 
 export function DashboardPage() {
-    const { profile, isAdmin } = useAuth();
+    const { profile } = useAuth();
 
     const [credits, setCredits] = useState<number | null>(null);
     const [recentSessions, setRecentSessions] = useState<SessionSummary[]>([]);
@@ -138,7 +138,7 @@ export function DashboardPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className={`grid grid-cols-1 md:grid-cols-2 ${isAdmin ? 'lg:grid-cols-3' : ''} gap-6 mb-8`}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <Link
                     to="/dashboard/new"
                     className={`bg-primary text-white p-6 rounded-xl shadow-lg hover:bg-opacity-95 transition-all group ${credits === 0 ? 'opacity-60 pointer-events-none' : ''
@@ -176,25 +176,6 @@ export function DashboardPage() {
                     <h3 className="text-lg font-semibold text-white mb-1">View History</h3>
                     <p className="text-slate-400 text-sm">Review past sessions and scores</p>
                 </Link>
-                {isAdmin && (
-                    <Link
-                        to="/admin"
-                        className="bg-slate-800 text-white p-6 rounded-xl shadow-sm hover:bg-slate-700 transition-all group"
-                    >
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                                </svg>
-                            </div>
-                            <svg className="w-5 h-5 opacity-50 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                        </div>
-                        <h3 className="text-lg font-semibold mb-1">Admin Panel</h3>
-                        <p className="text-white/70 text-sm">Manage users, providers & plans</p>
-                    </Link>
-                )}
             </div>
 
             {/* Recent Sessions */}
