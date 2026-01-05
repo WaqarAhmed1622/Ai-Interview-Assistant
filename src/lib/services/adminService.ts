@@ -92,6 +92,44 @@ export const adminService = {
         if (error) throw error;
     },
 
+    // === Contact Messages ===
+    async getContactMessages() {
+        const { data, error } = await supabase
+            .from('contact_messages')
+            .select('*')
+            .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        return data as {
+            id: string;
+            first_name: string;
+            last_name: string;
+            email: string;
+            subject: string;
+            message: string;
+            status: 'read' | 'unread';
+            created_at: string;
+        }[];
+    },
+
+    async updateMessageStatus(id: string, status: 'read' | 'unread') {
+        const { error } = await supabase
+            .from('contact_messages')
+            .update({ status })
+            .eq('id', id);
+
+        if (error) throw error;
+    },
+
+    async deleteMessage(id: string) {
+        const { error } = await supabase
+            .from('contact_messages')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+    },
+
     async createAdmin(email: string, password: string, fullName: string) {
         // Create a temporary client to avoid logging out the current admin
         const tempClient = createClient(
