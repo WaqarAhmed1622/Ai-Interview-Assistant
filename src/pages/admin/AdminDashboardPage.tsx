@@ -36,15 +36,16 @@ export function AdminDashboardPage() {
         async function loadStats() {
             try {
                 // Fetch users
-                const users = await adminService.getUsers();
-                const admins = users.filter(u => u.role === 'admin');
+                const allProfiles = await adminService.getUsers();
+                const admins = allProfiles.filter(u => u.role === 'admin');
+                const regularUsers = allProfiles.filter(u => u.role !== 'admin');
 
                 // Fetch active provider
                 const providers = await adminService.getProviders();
                 const active = providers.find(p => p.enabled);
 
                 setStats({
-                    totalUsers: users.length,
+                    totalUsers: regularUsers.length,
                     totalAdmins: admins.length,
                     activeProvider: active?.name || null
                 });
