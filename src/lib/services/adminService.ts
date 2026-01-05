@@ -44,7 +44,7 @@ export const adminService = {
         const { data, error } = await supabase
             .from('profiles')
             .select('*')
-            .eq('role', 'user')
+            .neq('role', 'admin')
             .order('created_at', { ascending: false });
 
         if (error) throw error;
