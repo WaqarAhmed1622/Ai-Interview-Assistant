@@ -1,4 +1,5 @@
 import { supabase } from '../supabase';
+import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../../types/database.types';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
@@ -39,18 +40,6 @@ export const adminService = {
         return data as Profile[];
     },
 
-    // Get only registered service users (excludes admins)
-    async getRegisteredUsers() {
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .neq('role', 'admin')
-            .order('created_at', { ascending: false });
-
-        if (error) throw error;
-        return data as Profile[];
-    },
-
     async updateUserRole(userId: string, role: 'user' | 'admin') {
         const { error } = await supabase
             .from('profiles')
@@ -58,6 +47,96 @@ export const adminService = {
             .eq('id', userId);
 
         if (error) throw error;
+    },
+
+    async updateAdminProfile(userId: string, updates: { full_name?: string }) {
+        const { error } = await supabase
+            .from('profiles')
+            .update(updates)
+            .eq('id', userId);
+
+        if (error) throw error;
+    },
+
+    async updateAdminPassword(userId: string, newPassword: string) {
+        const { error } = await supabase.rpc('admin_update_user_password', {
+            target_user_id: userId,
+            new_password: newPassword
+        });
+
+        if (error) throw error;
+    },
+
+    async deleteUser(userId: string) {
+        const { error } = await supabase.rpc('admin_delete_user', {
+            target_user_id: userId
+        });
+
+        if (error) throw error;
+    },
+
+    // New RPC to fetch users with ban status
+    async getRegisteredUsers() {
+        // We use the RPC to get ban status as well
+        const { data, error } = await supabase.rpc('admin_get_users_with_status');
+        
+        if (error) throw error;
+        return data as (Profile & { banned_until: string | null })[];
+    },
+
+    async toggleUserBan(userId: string, banUntil: string | null) {
+        const { error } = await supabase.rpc('admin_toggle_ban_user', {
+            target_user_id: userId,
+            ban_until: banUntil
+        });
+        if (error) throw error;
+    },
+
+    async createAdmin(email: string, password: string, fullName: string) {
+        // Create a temporary client to avoid logging out the current admin
+        const tempClient = createClient(
+            import.meta.env.VITE_SUPABASE_URL,
+            import.meta.env.VITE_SUPABASE_ANON_KEY,
+            {
+                auth: {
+                    persistSession: false // Critical: Don't persist this session
+                }
+            }
+        );
+
+        // 1. Create the user
+        const { data: authData, error: authError } = await tempClient.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    full_name: fullName,
+                }
+            }
+        });
+
+        if (authError) throw authError;
+        if (!authData.user) throw new Error('Failed to create user');
+
+        // 2. Update the profile role to admin immediately
+        // Note: This requires the current admin (authenticated client) to perform the update
+        // because the new user (tempClient) might not have permission to set their own role to admin depending on RLS.
+        // We use the main `supabase` client here which is authenticated as the current admin.
+        const { error: profileError } = await supabase
+            .from('profiles')
+            .update({ 
+                role: 'admin',
+                full_name: fullName // Ensure name is set in profile
+            })
+            .eq('id', authData.user.id);
+
+        if (profileError) {
+            // If we fail to make them admin, we should probably warn or try to cleanup
+            console.error('Failed to promote new user to admin:', profileError);
+            throw new Error('User created but failed to promote to admin: ' + profileError.message);
+        }
+
+        return authData.user;
     },
 
     // === LLM Providers ===
