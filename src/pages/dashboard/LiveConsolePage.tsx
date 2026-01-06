@@ -135,98 +135,30 @@ export function LiveConsolePage() {
             )}
 
             {/* Main Content */}
-            <div className="grid lg:grid-cols-3 gap-6 h-full flex-1">
-
-                {/* Left Column - Actions */}
-                <div className="space-y-4">
-                    {/* Action Buttons */}
-                    <div className="bg-surface rounded-xl shadow-sm p-6 border border-white/10">
-                        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-4">
-                            Quick Actions
-                        </h2>
-
-                        <div className="space-y-3">
-                            <button
-                                onClick={() => requestHint('hint')}
-                                disabled={loading || !connected}
-                                className="w-full py-3 px-4 bg-primary text-white rounded-lg font-medium hover:bg-opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
-                            >
-                                <Sparkles className="w-4 h-4" />
-                                Help Me
-                            </button>
-
-                            <button
-                                onClick={() => requestHint('code')}
-                                disabled={loading || !connected}
-                                className="w-full py-3 px-4 bg-primary text-white rounded-lg font-medium hover:bg-opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
-                            >
-                                <Code2 className="w-4 h-4" />
-                                Generate Code
-                            </button>
-
-                            <button
-                                onClick={() => requestHint('explain')}
-                                disabled={loading || !connected}
-                                className="w-full py-3 px-4 border border-primary text-primary rounded-lg font-medium hover:bg-primary/10 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
-                            >
-                                <BookOpen className="w-4 h-4" />
-                                Explain
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Quick Prompt */}
-                    <div className="bg-surface rounded-xl shadow-sm p-6 border border-white/10">
-                        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-4">
-                            Quick Prompt
-                        </h2>
-                        <div className="space-y-3">
-                            <textarea
-                                value={quickPrompt}
-                                onChange={(e) => setQuickPrompt(e.target.value)}
-                                placeholder="Ask anything..."
-                                disabled={!connected}
-                                className="w-full px-4 py-3 bg-background border border-white/10 rounded-lg resize-none h-24 focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-slate-800/50 text-white placeholder-slate-500"
-                            />
-                            <button
-                                onClick={handleQuickPrompt}
-                                disabled={loading || !quickPrompt.trim() || !connected}
-                                className="w-full py-2 px-4 bg-primary text-white rounded-lg font-medium hover:bg-opacity-90 disabled:opacity-50 transition-all"
-                            >
-                                {loading ? 'Processing...' : 'Send'}
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Credits */}
-                    <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl p-6 text-center">
-                        <div className="text-3xl font-bold text-green-400">{credits}</div>
-                        <div className="text-sm text-green-300 uppercase tracking-wide">Credits Remaining</div>
-                    </div>
-                </div>
-
-                {/* Right Columns - Transcript & Hints */}
-                <div className="lg:col-span-2 flex flex-col h-[calc(100vh-200px)]">
+            <div className="grid grid-cols-[1fr_20%] gap-6 h-full flex-1">
+                
+                {/* Left Column - Transcript & Hints */}
+                <div className="flex flex-col h-[calc(100vh-200px)]">
                     {/* Panel Tabs */}
                     <div className="flex bg-surface rounded-lg p-1 mb-4 border border-white/5">
                         <button
                             onClick={() => setActivePanel('transcript')}
-                            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${activePanel === 'transcript'
+                            className={`flex-1 py-1.5 px-3 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-2 ${activePanel === 'transcript'
                                 ? 'bg-primary text-white shadow-sm'
                                 : 'text-slate-400 hover:text-white'
                                 }`}
                         >
-                            <FileText className="w-4 h-4" />
+                            <FileText className="w-3.5 h-3.5" />
                             Live Transcript ({transcripts.length})
                         </button>
                         <button
                             onClick={() => setActivePanel('hints')}
-                            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${activePanel === 'hints'
+                            className={`flex-1 py-1.5 px-3 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-2 ${activePanel === 'hints'
                                 ? 'bg-primary text-white shadow-sm'
                                 : 'text-slate-400 hover:text-white'
                                 }`}
                         >
-                            <Lightbulb className="w-4 h-4" />
+                            <Lightbulb className="w-3.5 h-3.5" />
                             AI Hints ({hints.length})
                         </button>
                     </div>
@@ -327,6 +259,74 @@ export function LiveConsolePage() {
                                 ))}
                             </div>
                         )}
+                    </div>
+                </div>
+
+                {/* Right Column - Actions */}
+                <div className="space-y-4 min-w-[200px]">
+                    {/* Action Buttons */}
+                    <div className="bg-surface rounded-xl shadow-sm p-3 border border-white/10">
+                        <h2 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-2">
+                            Quick Actions
+                        </h2>
+
+                        <div className="space-y-2">
+                            <button
+                                onClick={() => requestHint('hint')}
+                                disabled={loading || !connected}
+                                className="w-full py-1.5 px-2 bg-primary text-white rounded-lg text-xs font-medium hover:bg-opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-1.5"
+                            >
+                                <Sparkles className="w-3 h-3" />
+                                Help Me
+                            </button>
+
+                            <button
+                                onClick={() => requestHint('code')}
+                                disabled={loading || !connected}
+                                className="w-full py-1.5 px-2 bg-primary text-white rounded-lg text-xs font-medium hover:bg-opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-1.5"
+                            >
+                                <Code2 className="w-3 h-3" />
+                                Gen Code
+                            </button>
+
+                            <button
+                                onClick={() => requestHint('explain')}
+                                disabled={loading || !connected}
+                                className="w-full py-1.5 px-2 border border-primary text-primary rounded-lg text-xs font-medium hover:bg-primary/10 disabled:opacity-50 transition-all flex items-center justify-center gap-1.5"
+                            >
+                                <BookOpen className="w-3 h-3" />
+                                Explain
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Quick Prompt */}
+                    <div className="bg-surface rounded-xl shadow-sm p-3 border border-white/10">
+                        <h2 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-2">
+                            Quick Prompt
+                        </h2>
+                        <div className="space-y-2">
+                            <textarea
+                                value={quickPrompt}
+                                onChange={(e) => setQuickPrompt(e.target.value)}
+                                placeholder="Ask..."
+                                disabled={!connected}
+                                className="w-full px-2 py-1.5 bg-background border border-white/10 rounded-lg resize-none h-16 text-xs focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-slate-800/50 text-white placeholder-slate-500"
+                            />
+                            <button
+                                onClick={handleQuickPrompt}
+                                disabled={loading || !quickPrompt.trim() || !connected}
+                                className="w-full py-1 px-2 bg-primary text-white rounded-lg text-xs font-medium hover:bg-opacity-90 disabled:opacity-50 transition-all"
+                            >
+                                {loading ? '...' : 'Send'}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Credits */}
+                    <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl p-3 text-center">
+                        <div className="text-xl font-bold text-green-400">{credits}</div>
+                        <div className="text-[10px] text-green-300 uppercase tracking-wide">Credits</div>
                     </div>
                 </div>
             </div>
