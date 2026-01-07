@@ -10,19 +10,42 @@ import {
   BookOpen,
   FileText,
   ArrowDown,
-  Info,
-  ArrowLeft
+  ArrowLeft,
+  Camera,
+  MessageSquare
 } from 'lucide-react';
 
 export function LiveConsolePage() {
-    const {
-        connected,
-        transcripts,
-        finalizedText,
-        hints,
-        sessionStatus,
-        sendCommand
-    } = useConsoleSync();
+  const {
+    connected,
+    transcripts,
+    finalizedText,
+    hints,
+    sessionStatus,
+    sendCommand
+  } = useConsoleSync();
+
+  /* ---------------- State ---------------- */
+  const transcriptRef = useRef<HTMLDivElement>(null);
+  const [userScrolledUp, setUserScrolledUp] = useState(false);
+  const [activePanel, setActivePanel] = useState<'transcript' | 'hints'>('transcript');
+  const [loading, setLoading] = useState(false);
+  const [quickPrompt, setQuickPrompt] = useState('');
+  const [credits, setCredits] = useState<number>(0);
+
+  /* ---------------- Fetch Credits ---------------- */
+  useEffect(() => {
+    const fetchCredits = async () => {
+      const result = await creditService.getBalance();
+      if (result.success && result.data) {
+        setCredits(result.data.balance);
+      }
+    };
+    fetchCredits();
+    // Refresh credits every 30 seconds
+    const interval = setInterval(fetchCredits, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   /* ---------------- Auto scroll ---------------- */
   useEffect(() => {
@@ -87,65 +110,53 @@ export function LiveConsolePage() {
                 <h1 className="text-lg font-bold text-foreground">Interview Copilot Console</h1>
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <span
-                    className={`w-2 h-2 rounded-full ${
-                      sessionStatus === 'active'
-                        ? 'bg-success animate-pulse'
-                        : sessionStatus === 'session_found'
+                    className={`w-2 h-2 rounded-full ${sessionStatus === 'active'
+                      ? 'bg-success animate-pulse'
+                      : sessionStatus === 'session_found'
                         ? 'bg-warning animate-pulse'
                         : 'bg-muted-foreground'
-                    }`}
+                      }`}
                   />
                   <span className="text-muted-foreground">
                     {sessionStatus === 'active'
                       ? 'Live - Receiving Data'
                       : sessionStatus === 'session_found'
-                      ? 'Session Found - Waiting for Data'
-                      : 'Waiting for Session'}
+                        ? 'Session Found - Waiting for Data'
+                        : 'Waiting for Session'}
                   </span>
                 </div>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Connection banner */}
-      {!connected && (
-        <div className="bg-warning/10 border border-warning/20 px-4 py-3 rounded-xl mb-6">
-          <div className="flex items-center justify-center gap-2 text-warning font-medium text-sm">
-            <Info className="w-4 h-4" />
-            Open meeting → Click extension → “Open Console”
-          </div>
-        </div>
-      )}
-
       {/* Main Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 flex-1">
         {/* Transcript + Hints */}
-        <div className="flex flex-col h-[calc(100vh-200px)]">
+        <div className="flex flex-col flex-1 min-h-0">
           {/* Tabs */}
           <div className="flex bg-card rounded-lg p-1 mb-4 border border-border">
             <button
               onClick={() => setActivePanel('transcript')}
-              className={`flex-1 py-2.5 rounded-md text-sm font-medium transition-all ${
-                activePanel === 'transcript'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-              }`}
+              className={`flex-1 py-2.5 rounded-md text-sm font-medium transition-all ${activePanel === 'transcript'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                }`}
             >
               <FileText className="w-4 h-4 inline mr-2" />
-              Transcript ({transcripts.length})
+              Transcript
             </button>
 
             <button
               onClick={() => setActivePanel('hints')}
-              className={`flex-1 py-2.5 rounded-md text-sm font-medium transition-all ${
-                activePanel === 'hints'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-              }`}
+              className={`flex-1 py-2.5 rounded-md text-sm font-medium transition-all ${activePanel === 'hints'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                }`}
             >
               <Lightbulb className="w-4 h-4 inline mr-2" />
-              AI Hints ({hints.length})
+              AI Assistance
             </button>
           </div>
 
@@ -157,10 +168,54 @@ export function LiveConsolePage() {
                 onScroll={handleScroll}
                 className="absolute inset-0 overflow-y-auto p-6"
               >
-                {!finalizedText && transcripts.length === 0 ? (
+                {!connected ? (
+                  <div className="text-muted-foreground space-y-6">
+                    <div className="text-center mb-8">
+                      <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <Mic className="w-8 h-8 opacity-50" />
+                      </div>
+                      <h2 className="text-lg font-semibold text-foreground mb-2">Getting Started</h2>
+                      <p className="text-sm opacity-70">Follow these steps to begin your AI-assisted interview</p>
+                    </div>
+
+                    <div className="space-y-4 text-sm">
+                      <div className="bg-muted/30 rounded-lg p-4">
+                        <h3 className="font-semibold text-foreground mb-3">📋 How to Start</h3>
+                        <ol className="space-y-2 list-decimal list-inside">
+                          <li>Open your meeting platform (Zoom, Google Meet, Teams, etc.)</li>
+                          <li>Click the Interview Copilot extension icon in your browser</li>
+                          <li>Log in if prompted</li>
+                          <li>Fill in your interview details (role, type, tech stack)</li>
+                          <li>Click "Start Session" to begin capturing audio</li>
+                          <li>Click "Open Console" in the extension to view this page</li>
+                        </ol>
+                      </div>
+
+                      <div className="bg-muted/30 rounded-lg p-4">
+                        <h3 className="font-semibold text-foreground mb-3">🎯 Assistance Buttons</h3>
+                        <ul className="space-y-2">
+                          <li><span className="text-amber-500 font-medium">✨ Help Me</span> — Get contextual tips based on the current conversation</li>
+                          <li><span className="text-primary font-medium">💬 Generate Answer</span> — Get a complete, interview-ready response</li>
+                          <li><span className="text-blue-500 font-medium">💻 Code</span> — Generate code snippets or solutions</li>
+                          <li><span className="text-purple-500 font-medium">📖 Explain</span> — Get explanations of technical concepts</li>
+                          <li><span className="text-green-500 font-medium">📷 Snap</span> — Capture the screen for context</li>
+                        </ul>
+                      </div>
+
+                      <div className="bg-muted/30 rounded-lg p-4">
+                        <h3 className="font-semibold text-foreground mb-3">💡 Tips</h3>
+                        <ul className="space-y-2">
+                          <li>• Use the Custom Prompt box to ask specific questions</li>
+                          <li>• The AI analyzes your live transcript for better responses</li>
+                          <li>• Click "Finish Meeting" in the extension when done</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                ) : !finalizedText && transcripts.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                     <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                        <Mic className="w-8 h-8 opacity-50" />
+                      <Mic className="w-8 h-8 opacity-50" />
                     </div>
                     <p className="font-medium">Listening for audio...</p>
                     <p className="text-sm opacity-70">Speak clearly to see transcription</p>
@@ -202,13 +257,13 @@ export function LiveConsolePage() {
                 )}
 
                 {!loading && hints.length === 0 && (
-                    <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                            <Lightbulb className="w-8 h-8 opacity-50" />
-                        </div>
-                        <p className="font-medium">No hints yet</p>
-                        <p className="text-sm opacity-70">Ask for help or wait for AI insights</p>
+                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                      <Lightbulb className="w-8 h-8 opacity-50" />
                     </div>
+                    <p className="font-medium">No hints yet</p>
+                    <p className="text-sm opacity-70">Ask for help or wait for AI insights</p>
+                  </div>
                 )}
 
                 {!loading &&
@@ -225,8 +280,11 @@ export function LiveConsolePage() {
                         {h.hint || h.text}
                       </div>
                     </div>
-                </div>
-            </header>
+                  ))}
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Actions Sidebar */}
         <div className="space-y-6 min-w-[300px]">
@@ -242,7 +300,7 @@ export function LiveConsolePage() {
                 disabled={!connected || loading}
                 className="w-full flex items-center justify-center gap-3 px-4 py-4 rounded-lg font-semibold text-foreground bg-background border border-input hover:bg-muted hover:border-primary/30 transition-all shadow-sm disabled:opacity-50"
               >
-                <Sparkles className="w-5 h-5 text-amber-500" /> 
+                <Sparkles className="w-5 h-5 text-amber-500" />
                 <span>Help Me</span>
               </button>
 
@@ -251,27 +309,39 @@ export function LiveConsolePage() {
                 disabled={!connected || loading}
                 className="w-full flex items-center justify-center gap-3 px-4 py-4 rounded-lg font-bold text-primary-foreground bg-primary hover:bg-primary/90 transition-all shadow-md shadow-primary/20 disabled:opacity-50"
               >
-                <Sparkles className="w-5 h-5" /> 
+                <MessageSquare className="w-5 h-5" />
                 <span>Generate Answer</span>
               </button>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <button
-                    onClick={() => requestHint('code')}
-                    disabled={!connected || loading}
-                    className="flex flex-col items-center justify-center gap-2 px-3 py-4 rounded-lg font-medium text-foreground bg-background border border-input hover:bg-muted transition-all shadow-sm disabled:opacity-50"
+                  onClick={() => requestHint('code')}
+                  disabled={!connected || loading}
+                  className="flex flex-col items-center justify-center gap-2 px-3 py-4 rounded-lg font-medium text-foreground bg-background border border-input hover:bg-muted transition-all shadow-sm disabled:opacity-50"
                 >
-                    <Code2 className="w-5 h-5 text-blue-500" />
-                    <span>Code</span>
+                  <Code2 className="w-5 h-5 text-blue-500" />
+                  <span>Code</span>
                 </button>
 
                 <button
-                    onClick={() => requestHint('explain')}
-                    disabled={!connected || loading}
-                    className="flex flex-col items-center justify-center gap-2 px-3 py-4 rounded-lg font-medium text-foreground bg-background border border-input hover:bg-muted transition-all shadow-sm disabled:opacity-50"
+                  onClick={() => requestHint('explain')}
+                  disabled={!connected || loading}
+                  className="flex flex-col items-center justify-center gap-2 px-3 py-4 rounded-lg font-medium text-foreground bg-background border border-input hover:bg-muted transition-all shadow-sm disabled:opacity-50"
                 >
-                    <BookOpen className="w-5 h-5 text-purple-500" />
-                    <span>Explain</span>
+                  <BookOpen className="w-5 h-5 text-purple-500" />
+                  <span>Explain</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActivePanel('hints');
+                    sendCommand('TAKE_SCREENSHOT', { trigger: 'console' });
+                  }}
+                  disabled={!connected || loading}
+                  className="flex flex-col items-center justify-center gap-2 px-3 py-4 rounded-lg font-medium text-foreground bg-background border border-input hover:bg-muted transition-all shadow-sm disabled:opacity-50"
+                >
+                  <Camera className="w-5 h-5 text-green-500" />
+                  <span>Snap</span>
                 </button>
               </div>
             </div>
@@ -301,10 +371,12 @@ export function LiveConsolePage() {
           <div className="bg-card border border-border rounded-xl p-4 flex items-center justify-between shadow-sm">
             <span className="text-sm font-medium text-muted-foreground">Available Credits</span>
             <div className="flex items-center gap-1.5">
-                <span className="text-xl font-bold text-foreground">{credits}</span>
-                <span className="text-xs text-muted-foreground">left</span>
+              <span className="text-xl font-bold text-foreground">{credits}</span>
+              <span className="text-xs text-muted-foreground">left</span>
             </div>
           </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 }

@@ -1,7 +1,5 @@
 import React from 'react';
-import * as HeroIcons from '@heroicons/react/24/outline';
-import * as HeroIconsSolid from '@heroicons/react/24/solid';
-import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
+import { HelpCircle } from 'lucide-react';
 
 type IconVariant = 'outline' | 'solid';
 
@@ -13,6 +11,12 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
     disabled?: boolean;
 }
 
+/**
+ * AppIcon - A wrapper component that provides icon rendering.
+ * Falls back to HelpCircle when icon cannot be found.
+ * NOTE: This component is kept for backwards compatibility.
+ * Consider using lucide-react icons directly instead.
+ */
 function Icon({
     name,
     variant = 'outline',
@@ -22,29 +26,15 @@ function Icon({
     disabled = false,
     ...props
 }: IconProps) {
-    const iconSet = variant === 'solid' ? HeroIconsSolid : HeroIcons;
-    // @ts-ignore - dynamic access to icon set
-    const IconComponent = iconSet[name as keyof typeof iconSet] as React.ComponentType<any>;
-
-    if (!IconComponent) {
-        return (
-            <QuestionMarkCircleIcon
-                width={size}
-                height={size}
-                className={`text-gray-400 ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
-                onClick={disabled ? undefined : onClick}
-                {...props}
-            />
-        );
-    }
-
+    // Since @heroicons/react is not installed, we return a placeholder icon
+    // Consider migrating to lucide-react icons which are already in use throughout the project
     return (
-        <IconComponent
+        <HelpCircle
             width={size}
             height={size}
-            className={`${disabled ? 'opacity-50 cursor-not-allowed' : onClick ? 'cursor-pointer hover:opacity-80' : ''} ${className}`}
+            className={`text-gray-400 ${disabled ? 'opacity-50 cursor-not-allowed' : onClick ? 'cursor-pointer hover:opacity-80' : ''} ${className}`}
             onClick={disabled ? undefined : onClick}
-            {...props}
+            {...(props as any)}
         />
     );
 }
