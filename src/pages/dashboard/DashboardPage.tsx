@@ -139,25 +139,7 @@ export function DashboardPage() {
 
             {/* Quick Actions */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <Link
-                    to="/dashboard/new"
-                    className={`bg-primary text-primary-foreground p-6 rounded-xl shadow-lg hover:bg-primary/90 transition-all group ${credits === 0 ? 'opacity-60 pointer-events-none' : ''
-                        }`}
-                >
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <svg className="w-5 h-5 opacity-50 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                    <h3 className="text-lg font-semibold mb-1">Start New Interview</h3>
-                    <p className="text-primary-foreground/80 text-sm">Practice with AI-powered feedback</p>
-                </Link>
+
 
                 <Link
                     to="/dashboard/history"

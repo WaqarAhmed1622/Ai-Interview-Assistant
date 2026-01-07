@@ -72,7 +72,7 @@ class BackgroundService {
 
       switch (msg.type) {
         case 'REQUEST_HINT':
-          this.requestHint(msg.data?.requestType ? { requestType: msg.data.requestType } : { trigger: 'manual' });
+          this.requestHint({ ...msg.data, trigger: msg.data?.trigger || 'manual' });
           break;
         case 'TAKE_SCREENSHOT':
           this.takeScreenshot({ trigger: 'manual' });

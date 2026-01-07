@@ -12,7 +12,10 @@ import {
   ArrowDown,
   ArrowLeft,
   Camera,
-  MessageSquare
+  MessageSquare,
+  ListChecks,
+  Zap,
+  CheckCircle2
 } from 'lucide-react';
 
 export function LiveConsolePage() {
@@ -169,47 +172,137 @@ export function LiveConsolePage() {
                 className="absolute inset-0 overflow-y-auto p-6"
               >
                 {!connected ? (
-                  <div className="text-muted-foreground space-y-6">
+                  <div className="max-w-2xl mx-auto">
+                    {/* Header */}
                     <div className="text-center mb-8">
-                      <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4 mx-auto">
-                        <Mic className="w-8 h-8 opacity-50" />
+                      <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl flex items-center justify-center mb-5 mx-auto border border-primary/20 shadow-lg shadow-primary/5">
+                        <Mic className="w-10 h-10 text-primary" />
                       </div>
-                      <h2 className="text-lg font-semibold text-foreground mb-2">Getting Started</h2>
-                      <p className="text-sm opacity-70">Follow these steps to begin your AI-assisted interview</p>
+                      <h2 className="text-2xl font-bold text-foreground mb-2">Welcome to Interview Copilot</h2>
+                      <p className="text-muted-foreground">Your AI-powered interview assistant</p>
                     </div>
 
-                    <div className="space-y-4 text-sm">
-                      <div className="bg-muted/30 rounded-lg p-4">
-                        <h3 className="font-semibold text-foreground mb-3">📋 How to Start</h3>
-                        <ol className="space-y-2 list-decimal list-inside">
-                          <li>Open your meeting platform (Zoom, Google Meet, Teams, etc.)</li>
-                          <li>Click the Interview Copilot extension icon in your browser</li>
-                          <li>Log in if prompted</li>
-                          <li>Fill in your interview details (role, type, tech stack)</li>
-                          <li>Click "Start Session" to begin capturing audio</li>
-                          <li>Click "Open Console" in the extension to view this page</li>
-                        </ol>
+                    {/* How to Start */}
+                    <div className="bg-gradient-to-br from-card to-muted/20 rounded-2xl p-6 mb-5 border border-border shadow-sm">
+                      <div className="flex items-center gap-3 mb-5">
+                        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                          <ListChecks className="w-5 h-5 text-primary" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-foreground">How to Start</h3>
                       </div>
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-4">
+                          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0 text-sm font-semibold text-muted-foreground">1</div>
+                          <div>
+                            <p className="text-foreground font-medium">Open your meeting platform</p>
+                            <p className="text-sm text-muted-foreground">Zoom, Google Meet, Teams, or any video call</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-4">
+                          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0 text-sm font-semibold text-muted-foreground">2</div>
+                          <div>
+                            <p className="text-foreground font-medium">Click the extension icon</p>
+                            <p className="text-sm text-muted-foreground">Find Interview Copilot in your browser toolbar</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-4">
+                          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0 text-sm font-semibold text-muted-foreground">3</div>
+                          <div>
+                            <p className="text-foreground font-medium">Fill interview details & start session</p>
+                            <p className="text-sm text-muted-foreground">Enter role, type, and tech stack, then click Start</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-4">
+                          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                            <CheckCircle2 className="w-4 h-4 text-primary" />
+                          </div>
+                          <div>
+                            <p className="text-foreground font-medium">You're ready!</p>
+                            <p className="text-sm text-muted-foreground">Transcript and AI assistance will appear here</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-                      <div className="bg-muted/30 rounded-lg p-4">
-                        <h3 className="font-semibold text-foreground mb-3">🎯 Assistance Buttons</h3>
-                        <ul className="space-y-2">
-                          <li><span className="text-amber-500 font-medium">✨ Help Me</span> — Get contextual tips based on the current conversation</li>
-                          <li><span className="text-primary font-medium">💬 Generate Answer</span> — Get a complete, interview-ready response</li>
-                          <li><span className="text-blue-500 font-medium">💻 Code</span> — Generate code snippets or solutions</li>
-                          <li><span className="text-purple-500 font-medium">📖 Explain</span> — Get explanations of technical concepts</li>
-                          <li><span className="text-green-500 font-medium">📷 Snap</span> — Capture the screen for context</li>
-                        </ul>
+                    {/* Assistance Buttons */}
+                    <div className="bg-gradient-to-br from-card to-muted/20 rounded-2xl p-6 mb-5 border border-border shadow-sm">
+                      <div className="flex items-center gap-3 mb-5">
+                        <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
+                          <Zap className="w-5 h-5 text-amber-500" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-foreground">Quick Actions</h3>
                       </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/50">
+                          <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                            <Sparkles className="w-4 h-4 text-amber-500" />
+                          </div>
+                          <div>
+                            <p className="text-foreground font-medium text-sm">Help Me</p>
+                            <p className="text-xs text-muted-foreground">Contextual tips</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 p-3 rounded-xl bg-primary/5 border border-primary/20">
+                          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <MessageSquare className="w-4 h-4 text-primary" />
+                          </div>
+                          <div>
+                            <p className="text-foreground font-medium text-sm">Generate Answer</p>
+                            <p className="text-xs text-muted-foreground">Full response</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/50">
+                          <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                            <Code2 className="w-4 h-4 text-blue-500" />
+                          </div>
+                          <div>
+                            <p className="text-foreground font-medium text-sm">Code</p>
+                            <p className="text-xs text-muted-foreground">Code snippets</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/50">
+                          <div className="w-9 h-9 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                            <BookOpen className="w-4 h-4 text-purple-500" />
+                          </div>
+                          <div>
+                            <p className="text-foreground font-medium text-sm">Explain</p>
+                            <p className="text-xs text-muted-foreground">Concepts explained</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/50 sm:col-span-2">
+                          <div className="w-9 h-9 rounded-lg bg-green-500/10 flex items-center justify-center">
+                            <Camera className="w-4 h-4 text-green-500" />
+                          </div>
+                          <div>
+                            <p className="text-foreground font-medium text-sm">Snap</p>
+                            <p className="text-xs text-muted-foreground">Capture screen for context analysis</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-                      <div className="bg-muted/30 rounded-lg p-4">
-                        <h3 className="font-semibold text-foreground mb-3">💡 Tips</h3>
-                        <ul className="space-y-2">
-                          <li>• Use the Custom Prompt box to ask specific questions</li>
-                          <li>• The AI analyzes your live transcript for better responses</li>
-                          <li>• Click "Finish Meeting" in the extension when done</li>
-                        </ul>
+                    {/* Pro Tips */}
+                    <div className="bg-gradient-to-br from-card to-muted/20 rounded-2xl p-6 border border-border shadow-sm">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                          <Lightbulb className="w-5 h-5 text-primary" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-foreground">Pro Tips</h3>
                       </div>
+                      <ul className="space-y-3 text-sm">
+                        <li className="flex items-start gap-3">
+                          <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                          <span className="text-muted-foreground">Use the <span className="text-foreground font-medium">Custom Prompt</span> box for specific questions</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                          <span className="text-muted-foreground">AI uses your live transcript for context-aware responses</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                          <span className="text-muted-foreground">Click <span className="text-foreground font-medium">Finish Meeting</span> in extension when done</span>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 ) : !finalizedText && transcripts.length === 0 ? (

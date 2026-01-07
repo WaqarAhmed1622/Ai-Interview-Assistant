@@ -39,7 +39,6 @@ import { InterviewHistoryPage } from './pages/dashboard/InterviewHistoryPage';
 import { SessionDetailsPage } from './pages/dashboard/SessionDetailsPage';
 import { SettingsPage } from './pages/dashboard/SettingsPage';
 import { CreditsPage } from './pages/dashboard/CreditsPage';
-import { NewSessionPage } from './pages/dashboard/NewSessionPage';
 
 // Admin Pages
 import { AdminLoginPage } from './pages/admin/AdminLoginPage';
@@ -101,8 +100,7 @@ function App() {
                   {/* Main Dashboard */}
                   <Route path="/dashboard" element={<DashboardPage />} />
 
-                  {/* New Session */}
-                  <Route path="/dashboard/new" element={<NewSessionPage />} />
+
 
 
 
