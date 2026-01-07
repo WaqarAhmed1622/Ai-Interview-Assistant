@@ -10,6 +10,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
     LayoutDashboard,
+    MessageSquare,
     Users,
     ShieldCheck,
     Cpu,
@@ -41,6 +42,11 @@ export function AdminLayout() {
             label: 'Dashboard',
             path: '/admin/dashboard',
             icon: <LayoutDashboard className="w-5 h-5" />
+        },
+        {
+            label: 'Messages',
+            path: '/admin/messages',
+            icon: <MessageSquare className="w-5 h-5" />
         },
         {
             label: 'Users',

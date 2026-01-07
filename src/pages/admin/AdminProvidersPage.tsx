@@ -16,7 +16,9 @@ import {
     Save,
     CheckCircle,
     AlertCircle,
-    ChevronDown
+    ChevronDown,
+    Eye,
+    EyeOff
 } from 'lucide-react';
 
 interface ProviderConfig {
@@ -82,6 +84,7 @@ export function AdminProvidersPage() {
     const [selectedModels, setSelectedModels] = useState<Record<string, string>>({});
     const [customModels, setCustomModels] = useState<Record<string, string>>({});
     const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
+    const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
@@ -97,8 +100,8 @@ export function AdminProvidersPage() {
             // Load providers from DB
             const providers = await adminService.getProviders();
             
-            // Find active provider
-            const active = providers.find(p => p.enabled);
+            // Find active provider (Must be in PROVIDER_CONFIGS to be considered an "LLM" provider)
+            const active = providers.find(p => p.enabled && PROVIDER_CONFIGS.some(c => c.id === p.provider));
             if (active) {
                 setActiveProvider(active.provider);
             }
@@ -120,6 +123,7 @@ export function AdminProvidersPage() {
                 PROVIDER_CONFIGS.forEach(p => {
                     defaults[p.id] = p.defaultModel;
                 });
+                defaults['deepgram'] = 'nova-2'; // Default for Deepgram
                 setSelectedModels(defaults);
             }
 
@@ -142,7 +146,7 @@ export function AdminProvidersPage() {
             // Get all providers
             const providers = await adminService.getProviders();
 
-            // Update each provider
+            // 1. Update LLM Providers
             for (const config of PROVIDER_CONFIGS) {
                 const existingProvider = providers.find(p => p.provider === config.id);
                 
@@ -158,6 +162,19 @@ export function AdminProvidersPage() {
 
                 await adminService.saveProvider(providerData);
             }
+
+            // 2. Update Deepgram Provider
+            const existingDeepgram = providers.find(p => p.provider === 'deepgram');
+            const deepgramData: LLMProvider = {
+                id: existingDeepgram?.id || crypto.randomUUID(),
+                name: 'Deepgram',
+                provider: 'deepgram',
+                apiKey: apiKeys['deepgram'] || '',
+                enabled: true, // Always enabled if configured
+                isCustom: false,
+                baseUrl: undefined
+            };
+            await adminService.saveProvider(deepgramData);
 
             // Save model selections
             await adminService.setAppConfig('selected_models', selectedModels);
@@ -309,6 +326,37 @@ export function AdminProvidersPage() {
                                 </p>
                             </div>
                         ))}
+
+                        {/* Deepgram Model */}
+                        <div className="pt-4 border-t border-slate-800">
+                             <div className="flex items-center gap-2 mb-3">
+                                <div className="p-1 bg-purple-500/20 rounded">
+                                    <svg className="w-3 h-3 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                                        <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                                        <line x1="12" y1="19" x2="12" y2="23" />
+                                        <line x1="8" y1="23" x2="16" y2="23" />
+                                    </svg>
+                                </div>
+                                <label className="text-sm font-medium text-slate-300">Deepgram Model (Speech)</label>
+                            </div>
+                            <div className="relative">
+                                <select
+                                    value={selectedModels['deepgram'] || 'nova-2'}
+                                    onChange={(e) => setSelectedModels(prev => ({
+                                        ...prev,
+                                        ['deepgram']: e.target.value
+                                    }))}
+                                    className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-primary appearance-none cursor-pointer"
+                                >
+                                    <option value="nova-2">Nova 2 (Recommended)</option>
+                                    <option value="nova">Nova</option>
+                                    <option value="enhanced">Enhanced</option>
+                                    <option value="base">Base</option>
+                                </select>
+                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -331,16 +379,24 @@ export function AdminProvidersPage() {
                             </label>
                             <div className="relative">
                                 <input
-                                    type="password"
+                                    type={visibleKeys[config.id] ? 'text' : 'password'}
                                     placeholder={`Enter ${config.name} API key...`}
                                     value={apiKeys[config.id] || ''}
                                     onChange={(e) => setApiKeys(prev => ({
                                         ...prev,
                                         [config.id]: e.target.value
                                     }))}
-                                    className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-primary font-mono text-sm"
+                                    className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-primary font-mono text-sm pr-20"
                                 />
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setVisibleKeys(prev => ({ ...prev, [config.id]: !prev[config.id] }))}
+                                        className="text-slate-500 hover:text-white"
+                                        title={visibleKeys[config.id] ? "Hide Key" : "Show Key"}
+                                    >
+                                        {visibleKeys[config.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
                                     {apiKeys[config.id] ? (
                                         <CheckCircle className="w-4 h-4 text-green-500" />
                                     ) : (
@@ -350,6 +406,41 @@ export function AdminProvidersPage() {
                             </div>
                         </div>
                     ))}
+
+                    {/* Deepgram Key */}
+                    <div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <label className="block text-sm font-medium text-slate-300">Deepgram API Key</label>
+                            <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded border border-purple-500/20">Speech</span>
+                        </div>
+                        <div className="relative">
+                            <input
+                                type={visibleKeys['deepgram'] ? 'text' : 'password'}
+                                placeholder="Enter Deepgram API Key..."
+                                value={apiKeys['deepgram'] || ''}
+                                onChange={(e) => setApiKeys(prev => ({
+                                    ...prev,
+                                    ['deepgram']: e.target.value
+                                }))}
+                                className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-primary font-mono text-sm pr-20"
+                            />
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setVisibleKeys(prev => ({ ...prev, 'deepgram': !prev['deepgram'] }))}
+                                    className="text-slate-500 hover:text-white"
+                                    title={visibleKeys['deepgram'] ? "Hide Key" : "Show Key"}
+                                >
+                                    {visibleKeys['deepgram'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                                {apiKeys['deepgram'] ? (
+                                    <CheckCircle className="w-4 h-4 text-green-500" />
+                                ) : (
+                                    <AlertCircle className="w-4 h-4 text-slate-500" />
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -12,7 +12,7 @@ export function Footer({ variant = 'dark' }: FooterProps) {
   const isLight = variant === 'light';
 
   return (
-    <footer className={cn("pt-16 pb-8 border-t", isLight ? "bg-slate-50 border-slate-200" : "bg-surface/50 border-white/5")}>
+    <footer className={cn("pt-16 pb-8 border-t", isLight ? "bg-slate-50 border-slate-200" : "bg-[#0F172A] border-slate-800")}>
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand Column */}
